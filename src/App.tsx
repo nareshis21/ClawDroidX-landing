@@ -21,7 +21,7 @@ const Navbar = () => (
       <span>ClawDroidX</span>
     </div>
     <ul className="nav-links">
-      <li><a href="https://github.com/nareshis21/ClawDroidX" className="btn-nav-download">Download App</a></li>
+      <li><a href="https://github.com/nareshis21/ClawDroidX-landing/releases/download/v0.1.0-beta/ClawDroidX-v0.1.0-beta.apk" className="btn-nav-download">Download App</a></li>
     </ul>
   </nav>
 )
@@ -144,10 +144,13 @@ const Hero = () => {
         <Reveal delay={0.2}>
           <p>What if your phone could do things <em>for you</em> — securely and hands-free?
           ClawDroidX is the native agent that navigates apps locally so you don't have to.</p>
+          <p style={{ fontSize: '0.85rem', opacity: 0.6, marginTop: '8px' }}>
+            Note: This is an <strong>experimental research release</strong>. Please expect bugs and <a href="mailto:nareshlahajal@gmail.com" style={{ color: 'inherit', textDecoration: 'underline' }}>reach out</a> with feedback!
+          </p>
         </Reveal>
         <Reveal delay={0.3}>
           <div className="hero-btns">
-            <a href="#" className="btn-download">Download Beta</a>
+            <a href="https://github.com/nareshis21/ClawDroidX-landing/releases/download/v0.1.0-beta/ClawDroidX-v0.1.0-beta.apk" className="btn-download">Download Beta</a>
             <a href="#setup" className="btn-secondary">Watch it Work</a>
           </div>
         </Reveal>
@@ -459,7 +462,7 @@ function App() {
       <section className="info-section">
         <div className="section-header centered">
           <h2>Join the Journey</h2>
-          <p>We're building this in the open. Use it, break it, and let us know how we can make it better.</p>
+          <p>We're building this in the open. As an experimental project, we value your feedback to help us squash bugs and evolve faster.</p>
           <div className="hero-btns" style={{ marginTop: '32px', justifyContent: 'center' }}>
             <a href="mailto:nareshlahajal@gmail.com" className="btn-download">Email Review</a>
             <a href="https://www.linkedin.com/in/naresh-kumar-lahajal-a50383252/" className="btn-secondary">Message on LinkedIn</a>
