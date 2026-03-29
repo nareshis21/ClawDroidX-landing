@@ -83,7 +83,8 @@ const Hero = () => {
               if (rect && rect.top < window.innerHeight && rect.bottom > 0 && !hasUserPaused) {
                 isInternalAction.current = true;
                 event.target.playVideo();
-                event.target.unMute();
+                // We REMOVE unMute() here to bypass browser blocks on reload.
+                // The global interaction listener will unmute when you touch the screen.
               }
             },
             onStateChange: (event: any) => {
@@ -110,6 +111,7 @@ const Hero = () => {
             if (!hasUserPaused) {
               isInternalAction.current = true;
               playerRef.current.playVideo();
+              // Once they interact once, unMute is allowed here.
               playerRef.current.unMute();
               playerRef.current.setVolume(100);
             }
@@ -204,7 +206,7 @@ const FeatureRow = ({ subtitle, title, description, extra, video, reversed = fal
               if (rect && rect.top < window.innerHeight && rect.bottom > 0 && !hasUserPaused) {
                 isInternalAction.current = true;
                 event.target.playVideo();
-                event.target.unMute();
+                // removal of unMute here fixes the reload autoplay stall
               }
             },
             onStateChange: (event: any) => {
