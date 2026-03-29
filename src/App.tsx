@@ -26,16 +26,112 @@ const Navbar = () => (
   </nav>
 )
 
-const Hero = () => {
-  const iframeRef = useRef<HTMLIFrameElement>(null)
+// Load YouTube API script once
+let apiScriptAdded = false;
+const loadYouTubeAPI = () => {
+  if (apiScriptAdded) return;
+  const tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  const firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+  apiScriptAdded = true;
+};
 
-  const handleHover = (isHovered: boolean) => {
-    if (!iframeRef.current) return
-    // Volume logic removed as per user request to keep it muted
-  }
+// Global registry for players to unmute on first interaction
+const activePlayers = new Set<any>();
+if (typeof window !== 'undefined') {
+  const unmuteAll = () => {
+    activePlayers.forEach(player => {
+      try {
+        if (player && typeof player.unMute === 'function') {
+          player.unMute();
+          player.setVolume(100);
+        }
+      } catch (e) {}
+    });
+    window.removeEventListener('mousedown', unmuteAll);
+    window.removeEventListener('touchstart', unmuteAll);
+    window.removeEventListener('scroll', unmuteAll);
+    window.removeEventListener('keydown', unmuteAll);
+  };
+  window.addEventListener('mousedown', unmuteAll);
+  window.addEventListener('touchstart', unmuteAll);
+  window.addEventListener('scroll', unmuteAll);
+  window.addEventListener('keydown', unmuteAll);
+}
+
+const Hero = () => {
+  const playerRef = useRef<any>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isInternalAction = useRef(false);
+  const [hasUserPaused, setHasUserPaused] = React.useState(false);
+  const iframeId = 'hero-player';
+
+  React.useEffect(() => {
+    loadYouTubeAPI();
+    
+    let timer: any;
+    const initPlayer = () => {
+      const el = document.getElementById(iframeId);
+      if ((window as any).YT && (window as any).YT.Player && el) {
+        playerRef.current = new (window as any).YT.Player(iframeId, {
+          events: {
+            onReady: (event: any) => {
+              activePlayers.add(event.target);
+              event.target.setVolume(100);
+              const rect = containerRef.current?.getBoundingClientRect();
+              if (rect && rect.top < window.innerHeight && rect.bottom > 0 && !hasUserPaused) {
+                isInternalAction.current = true;
+                event.target.playVideo();
+                event.target.unMute();
+              }
+            },
+            onStateChange: (event: any) => {
+              if (event.data === 2) { // PAUSED
+                if (!isInternalAction.current) setHasUserPaused(true);
+              } else if (event.data === 1) { // PLAYING
+                if (!isInternalAction.current) setHasUserPaused(false);
+              }
+              isInternalAction.current = false;
+            },
+          },
+        });
+        clearInterval(timer);
+      }
+    };
+
+    timer = setInterval(initPlayer, 200);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!playerRef.current || typeof playerRef.current.playVideo !== 'function') return;
+          if (entry.isIntersecting) {
+            if (!hasUserPaused) {
+              isInternalAction.current = true;
+              playerRef.current.playVideo();
+              playerRef.current.unMute();
+              playerRef.current.setVolume(100);
+            }
+          } else {
+            isInternalAction.current = true;
+            playerRef.current.pauseVideo();
+          }
+        })
+      },
+      { threshold: 0.1 }
+    );
+
+    if (containerRef.current) observer.observe(containerRef.current);
+    return () => {
+      clearInterval(timer);
+      observer.disconnect();
+      if (playerRef.current) activePlayers.delete(playerRef.current);
+    };
+  }, [hasUserPaused]);
 
   return (
-    <header className="hero">
+    <header className="hero" ref={containerRef}>
       <div className="hero-content">
         <Reveal><span className="beta-tag">Public Beta</span></Reveal>
         <Reveal delay={0.1}>
@@ -67,11 +163,11 @@ const Hero = () => {
         </Reveal>
       </div>
       <Reveal delay={0.3}>
-        <div className="featured-video-wrapper" onMouseEnter={() => handleHover(true)} onMouseLeave={() => handleHover(false)}>
+        <div className="featured-video-wrapper">
           <div className="youtube-aspect-ratio">
             <iframe
-              ref={iframeRef}
-              src="https://www.youtube.com/embed/jz6RTqdn2ls?autoplay=1&mute=1&loop=1&playlist=jz6RTqdn2ls&enablejsapi=1"
+              id={iframeId}
+              src="https://www.youtube.com/embed/s7T-aVMKUnY?autoplay=1&mute=1&loop=1&playlist=s7T-aVMKUnY&enablejsapi=1&playsinline=1&rel=0&controls=0&modestbranding=1"
               style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
@@ -85,19 +181,78 @@ const Hero = () => {
 
 const FeatureRow = ({ subtitle, title, description, extra, video, reversed = false }: any) => {
   const isYouTube = video.includes('youtube.com') || video.includes('youtu.be')
-  const iframeRef = React.useRef<HTMLIFrameElement>(null)
+  const playerRef = useRef<any>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isInternalAction = useRef(false);
+  const [hasUserPaused, setHasUserPaused] = React.useState(false);
+  const [iframeId] = React.useState(() => `player-${Math.random().toString(36).substr(2, 9)}`);
 
-  const handleHover = (isHovered: boolean) => {
-    if (!iframeRef.current || !isYouTube) return
-    const command = isHovered 
-      ? JSON.stringify({ event: 'command', func: 'playVideo' })
-      : JSON.stringify({ event: 'command', func: 'pauseVideo' })
-    
-    iframeRef.current.contentWindow?.postMessage(command, '*')
-  }
+  React.useEffect(() => {
+    if (!isYouTube) return;
+    loadYouTubeAPI();
+
+    let timer: any;
+    const initPlayer = () => {
+      const el = document.getElementById(iframeId);
+      if ((window as any).YT && (window as any).YT.Player && el) {
+        playerRef.current = new (window as any).YT.Player(iframeId, {
+          events: {
+            onReady: (event: any) => {
+              activePlayers.add(event.target);
+              event.target.setVolume(100);
+              const rect = containerRef.current?.getBoundingClientRect();
+              if (rect && rect.top < window.innerHeight && rect.bottom > 0 && !hasUserPaused) {
+                isInternalAction.current = true;
+                event.target.playVideo();
+                event.target.unMute();
+              }
+            },
+            onStateChange: (event: any) => {
+              if (event.data === 2) {
+                if (!isInternalAction.current) setHasUserPaused(true);
+              } else if (event.data === 1) {
+                if (!isInternalAction.current) setHasUserPaused(false);
+              }
+              isInternalAction.current = false;
+            },
+          },
+        });
+        clearInterval(timer);
+      }
+    };
+
+    timer = setInterval(initPlayer, 200);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!playerRef.current || typeof playerRef.current.playVideo !== 'function') return;
+          if (entry.isIntersecting) {
+            if (!hasUserPaused) {
+              isInternalAction.current = true;
+              playerRef.current.playVideo();
+              playerRef.current.unMute();
+              playerRef.current.setVolume(100);
+            }
+          } else {
+            isInternalAction.current = true;
+            playerRef.current.pauseVideo();
+          }
+        })
+      },
+      { threshold: 0.1 }
+    );
+
+    if (containerRef.current) observer.observe(containerRef.current);
+    return () => {
+      clearInterval(timer);
+      observer.disconnect();
+      if (playerRef.current) activePlayers.delete(playerRef.current);
+    };
+  }, [isYouTube, hasUserPaused, iframeId]);
 
   return (
-    <div className={`feature-row ${reversed ? 'reverse' : ''}`} onMouseEnter={() => handleHover(true)} onMouseLeave={() => handleHover(false)}>
+    <div className={`feature-row ${reversed ? 'reverse' : ''}`} ref={containerRef}>
       <Reveal>
         <div className="feature-info">
           {subtitle && <h4>{subtitle}</h4>}
@@ -111,8 +266,8 @@ const FeatureRow = ({ subtitle, title, description, extra, video, reversed = fal
           {isYouTube ? (
             <div className="youtube-aspect-ratio">
               <iframe
-                ref={iframeRef}
-                src={`${video}${video.includes('?') ? '&' : '?'}enablejsapi=1&mute=1`}
+                id={iframeId}
+                src={`${video}${video.includes('?') ? '&' : '?'}enablejsapi=1&mute=1&playsinline=1&rel=0&controls=0&modestbranding=1`}
                 style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
@@ -195,7 +350,7 @@ function App() {
           <FeatureRow 
             title="Define Your Goal"
             description="Tell ClawDroidX what you want to achieve. Whether it's ordering groceries or adjusting system settings, our agent understands your intent directly."
-            video="https://www.youtube.com/embed/jz6RTqdn2ls"
+            video="https://www.youtube.com/embed/jSZNNOKALu8?enablejsapi=1&playsinline=1&rel=0"
           />
           <FeatureRow 
             title="Autonomous Planning"
@@ -206,7 +361,7 @@ function App() {
           <FeatureRow 
             title="Local Execution"
             description="Watch as the workflow completes. In this beta phase, we're optimizing for 100% on-device execution to ensure your privacy is never compromised."
-            video="https://www.youtube.com/embed/B9lVXu09fW0"
+            video="https://www.youtube.com/embed/RJsp1HzMuFo?enablejsapi=1&playsinline=1&rel=0"
           />
         </div>
       </section>
@@ -259,14 +414,14 @@ function App() {
             title="Uber Ride Discovery"
             description="Experience how ClawDroidX handles complex, multi-step tasks across apps. From setting destinations to choosing ride types, everything is automated natively."
             extra="The agent understands the visual context of the Uber app, navigating through dynamic maps just like a human would."
-            video="https://www.youtube.com/embed/TZTrRrrD3Z4"
+            video="https://www.youtube.com/embed/o6_O_Dxsg20?enablejsapi=1&playsinline=1&rel=0"
           />
           <FeatureRow 
             subtitle="Local Security Automation"
             title="PinLocal Security Bypass"
             description="Witness the power of local heuristics. ClawDroidX identifies secure PIN entry screens and automates the unlock flow with zero LLM latency, keeping your sensitive data entirely on-device."
             extra="By combining computer vision with direct physical input simulation, we achieve 100% reliability even on high-security payment screens."
-            video="https://www.youtube.com/embed/W3RbcyzV0-M"
+            video="https://www.youtube.com/embed/1Iz3m3eLxAI?enablejsapi=1&playsinline=1&rel=0"
             reversed
           />
           <FeatureRow 
@@ -274,14 +429,14 @@ function App() {
             title="Perceptual Hardware Control"
             description="Instant management of Brightness, Volume, and System Toggles. No menus to navigate — our agent understands perceptual power laws to adjust your environment perfectly based on natural intent."
             extra="By leveraging native Android system hooks, ClawDroidX can bypass deep menu nesting, allowing you to control your device's physical state using simple, conversational commands."
-            video="https://www.youtube.com/embed/WOS4JldP2SA"
+            video="https://www.youtube.com/embed/Sem0eNZrkrE?enablejsapi=1&playsinline=1&rel=0"
           />
           <FeatureRow 
             subtitle="Hardware Mastering"
             title="Native Flashlight"
             description="Demonstrating zero-latency execution. Physical hardware toggles happen instantly when you define your goal."
             extra="This showcase highlights the deep integration with Android's hardware abstraction layer, proving that the agent is more than just a UI automation tool."
-            video="https://www.youtube.com/embed/JvuzggJ72Pk"
+            video="https://www.youtube.com/embed/L9vyT6JCS_Y?enablejsapi=1&playsinline=1&rel=0"
             reversed
           />
         </div>

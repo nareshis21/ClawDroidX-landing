@@ -181,11 +181,17 @@
 }
 
 /* Benefits & Setup */
-.benefits-grid, .tech-grid, .setup-grid {
+.setup-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 32px;
   margin-top: 60px;
+}
+
+@media (max-width: 768px) {
+  .setup-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .pill-card, .setup-card, .tech-card {
