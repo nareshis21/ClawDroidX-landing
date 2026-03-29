@@ -47,7 +47,7 @@ if (typeof window !== 'undefined') {
           player.unMute();
           player.setVolume(100);
         }
-      } catch (e) {}
+      } catch (e) { }
     });
     window.removeEventListener('mousedown', unmuteAll);
     window.removeEventListener('touchstart', unmuteAll);
@@ -69,7 +69,7 @@ const Hero = () => {
 
   React.useEffect(() => {
     loadYouTubeAPI();
-    
+
     let timer: any;
     const initPlayer = () => {
       const el = document.getElementById(iframeId);
@@ -143,7 +143,7 @@ const Hero = () => {
         </Reveal>
         <Reveal delay={0.2}>
           <p>What if your phone could do things <em>for you</em> — securely and hands-free?
-          ClawDroidX is the native agent that navigates apps locally so you don't have to.</p>
+            ClawDroidX is the native agent that navigates apps locally so you don't have to.</p>
           <p style={{ fontSize: '0.85rem', opacity: 0.6, marginTop: '8px' }}>
             Note: This is an <strong>experimental research release</strong>. Please expect bugs and <a href="mailto:nareshlahajal@gmail.com" style={{ color: 'inherit', textDecoration: 'underline' }}>reach out</a> with feedback!
           </p>
@@ -158,11 +158,14 @@ const Hero = () => {
         <Reveal delay={0.4}>
           <div className="config-card">
             <div className="config-header">
-              <Wrench size={18} />
-              <span>Agent Configuration</span>
+              <Activity size={18} />
+              <span>Agent Mechanics</span>
             </div>
             <div className="config-body">
-              <p>To enable cloud-powered reasoning, provide your <strong>Groq API Key</strong> or <strong>Cloudflare Credentials</strong> within the app's settings menu.</p>
+              <p>ClawDroidX stays out of your way. A <strong>floating overlay icon</strong> allows you to trigger the agent instantly from any screen. Just click the mic and speak your goal.</p>
+              <p style={{ marginTop: '8px', opacity: 0.8, fontSize: '0.9rem' }}>
+                <em>Tip: For now, be precise with your commands. We are evolving to support indirect/natural language perfectly in Phase 2.</em>
+              </p>
             </div>
           </div>
         </Reveal>
@@ -352,34 +355,48 @@ function App() {
           <p>Native orchestration, executed entirely on-device.</p>
         </div>
         <div className="showcase-rows">
-          <FeatureRow 
+          <FeatureRow
             title="Define Your Goal"
             description="Tell ClawDroidX what you want to achieve. Whether it's ordering groceries or adjusting system settings, our agent understands your intent directly."
             video="https://www.youtube.com/embed/jSZNNOKALu8?enablejsapi=1&playsinline=1&rel=0"
           />
-          <FeatureRow 
+          <FeatureRow
             title="Autonomous Planning"
             description="The agent builds a native execution plan, identifying the most efficient path through your applications without ever sending UI data to the cloud."
             video="architecture.png"
             reversed
           />
-          <FeatureRow 
+          <FeatureRow
             title="Local Execution"
             description="Watch as the workflow completes. In this beta phase, we're optimizing for 100% on-device execution to ensure your privacy is never compromised."
             video="https://www.youtube.com/embed/RJsp1HzMuFo?enablejsapi=1&playsinline=1&rel=0"
+          />
+          <FeatureRow
+            title="Adaptive Macro Learning"
+            description="ClawDroidX doesn't just execute; it evolves. Every successful workflow is distilled into a semantic macro, stored locally to enable instant, zero-latency execution for all future repeat tasks."
+            video="https://www.youtube.com/embed/Sem0eNZrkrE?enablejsapi=1&playsinline=1&rel=0"
+            reversed
+          />
+          <FeatureRow
+            title="Self-Healing Execution"
+            description="Our macros are alive. If a UI element moves or an app updates, ClawDroidX automatically detects the drift, re-reasons using local vision, and 'heals' the macro path in real-time."
+            video="https://www.youtube.com/embed/1Iz3m3eLxAI?enablejsapi=1&playsinline=1&rel=0"
           />
         </div>
       </section>
 
       <section className="info-section">
         <div className="section-header centered">
-          <h2>Why ClawDroidX?</h2>
-          <p>The first truly native, secure AI agent for mobile.</p>
+          <h2>Try it Yourself: Use Cases</h2>
+          <p>ClawDroidX intelligently scans your installed apps (recognizing 'zapto' as Zomato or 'ubar' as Uber) to execute your goals.</p>
         </div>
         <div className="benefits-grid">
-          <BenefitCard icon={Accessibility} title="Fully Native" description="Operates directly on Android accessibility. No ADB or external setups required." />
-          <BenefitCard icon={Shield} title="Privacy First" description="Sensitive data like PINs never leaves your device. Secure local UI pruning." />
-          <BenefitCard icon={Activity} title="90% Hands-Free" description="Built-in TTS + STT lets you talk to your phone and watch it execute complex tasks." />
+          <BenefitCard icon={Phone} title="Autonomous Calling" description="Ask the agent to call complex contacts or dial numbers from your screen logic." />
+          <BenefitCard icon={Zap} title="Rapid Toggles" description="Instantly manage Flashlight, Bluetooth, or DND without digging into settings." />
+          <BenefitCard icon={Search} title="Smart Search" description="Find specific info inside apps like LinkedIn or Twitter and have it distilled locally." />
+          <BenefitCard icon={Activity} title="Workout Tracking" description="Open your fitness app and log stats using just your voice via the floating mic." />
+          <BenefitCard icon={Shield} title="Payment Defense" description="Automate secure checkout on apps like Paytm with zero-latency PIN entry." />
+          <BenefitCard icon={RefreshCw} title="Routine Replay" description="Set your morning alarm, check weather, and open Spotify in one command." />
         </div>
       </section>
 
@@ -390,6 +407,7 @@ function App() {
         </div>
         <div className="tech-grid">
           <TechCard icon={RefreshCw} title="Zero-Token Replay" description="Learns from success. Repeated tasks are replayed via a local macro cache, eliminating LLM latency and costs." />
+          <TechCard icon={Zap} title="Dynamic Variable Injection" description="Macros aren't static. Inject new locations, contacts, or totals into any cached path for personalized, rapid execution." />
           <TechCard icon={Search} title="Semantic Pruning" description="Scans 300+ UI nodes locally using ONNX Runtime, distilling the tree into the top 30 most relevant targets." />
           <TechCard icon={Shield} title="Local Security Vault" description="Sensitive data like PINs and biometric triggers are handled entirely within the device's secure enclave." />
         </div>
@@ -414,14 +432,14 @@ function App() {
           <p>ClawDroidX turns your mobile intent into autonomous action.</p>
         </div>
         <div className="showcase-rows" style={{ marginTop: '80px' }}>
-          <FeatureRow 
+          <FeatureRow
             subtitle="Seamless Orchestration"
             title="Uber Ride Discovery"
             description="Experience how ClawDroidX handles complex, multi-step tasks across apps. From setting destinations to choosing ride types, everything is automated natively."
             extra="The agent understands the visual context of the Uber app, navigating through dynamic maps just like a human would."
             video="https://www.youtube.com/embed/o6_O_Dxsg20?enablejsapi=1&playsinline=1&rel=0"
           />
-          <FeatureRow 
+          <FeatureRow
             subtitle="Local Security Automation"
             title="PinLocal Security Bypass"
             description="Witness the power of local heuristics. ClawDroidX identifies secure PIN entry screens and automates the unlock flow with zero LLM latency, keeping your sensitive data entirely on-device."
@@ -429,14 +447,14 @@ function App() {
             video="https://www.youtube.com/embed/1Iz3m3eLxAI?enablejsapi=1&playsinline=1&rel=0"
             reversed
           />
-          <FeatureRow 
+          <FeatureRow
             subtitle="Direct OS Orchestration"
             title="Perceptual Hardware Control"
             description="Instant management of Brightness, Volume, and System Toggles. No menus to navigate — our agent understands perceptual power laws to adjust your environment perfectly based on natural intent."
             extra="By leveraging native Android system hooks, ClawDroidX can bypass deep menu nesting, allowing you to control your device's physical state using simple, conversational commands."
             video="https://www.youtube.com/embed/Sem0eNZrkrE?enablejsapi=1&playsinline=1&rel=0"
           />
-          <FeatureRow 
+          <FeatureRow
             subtitle="Hardware Mastering"
             title="Native Flashlight"
             description="Demonstrating zero-latency execution. Physical hardware toggles happen instantly when you define your goal."
