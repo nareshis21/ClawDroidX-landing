@@ -1,3 +1,4 @@
+import React, { useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Bolt, Wrench, Shield, Phone, Accessibility, Activity, Search, RefreshCw, Zap } from 'lucide-react'
 import './App.css'
@@ -25,58 +26,78 @@ const Navbar = () => (
   </nav>
 )
 
-const Hero = () => (
-  <header className="hero">
-    <div className="hero-content">
-      <Reveal><span className="beta-tag">Public Beta</span></Reveal>
-      <Reveal delay={0.1}>
-        <h1>Your Android — on <span style={{ whiteSpace: 'nowrap' }}>steroids
-          <Bolt className="hero-bolt" size={38} />
-        </span></h1>
-      </Reveal>
-      <Reveal delay={0.2}>
-        <p>What if your phone could do things <em>for you</em> — securely and hands-free?
-        ClawDroidX is the native agent that navigates apps locally so you don't have to.</p>
-      </Reveal>
-      <Reveal delay={0.3}>
-        <div className="hero-btns">
-          <a href="#" className="btn-download">Download Beta</a>
-          <a href="#setup" className="btn-secondary">Watch it Work</a>
-        </div>
-      </Reveal>
+const Hero = () => {
+  const iframeRef = useRef<HTMLIFrameElement>(null)
 
-      <Reveal delay={0.4}>
-        <div className="config-card">
-          <div className="config-header">
-            <Wrench size={18} />
-            <span>Agent Configuration</span>
+  const handleHover = (isHovered: boolean) => {
+    if (!iframeRef.current) return
+    // Volume logic removed as per user request to keep it muted
+  }
+
+  return (
+    <header className="hero">
+      <div className="hero-content">
+        <Reveal><span className="beta-tag">Public Beta</span></Reveal>
+        <Reveal delay={0.1}>
+          <h1>Your Android — on <span style={{ whiteSpace: 'nowrap' }}>steroids
+            <Bolt className="hero-bolt" size={38} />
+          </span></h1>
+        </Reveal>
+        <Reveal delay={0.2}>
+          <p>What if your phone could do things <em>for you</em> — securely and hands-free?
+          ClawDroidX is the native agent that navigates apps locally so you don't have to.</p>
+        </Reveal>
+        <Reveal delay={0.3}>
+          <div className="hero-btns">
+            <a href="#" className="btn-download">Download Beta</a>
+            <a href="#setup" className="btn-secondary">Watch it Work</a>
           </div>
-          <div className="config-body">
-            <p>To enable cloud-powered reasoning, provide your <strong>Groq API Key</strong> or <strong>Cloudflare Credentials</strong> within the app's settings menu.</p>
+        </Reveal>
+
+        <Reveal delay={0.4}>
+          <div className="config-card">
+            <div className="config-header">
+              <Wrench size={18} />
+              <span>Agent Configuration</span>
+            </div>
+            <div className="config-body">
+              <p>To enable cloud-powered reasoning, provide your <strong>Groq API Key</strong> or <strong>Cloudflare Credentials</strong> within the app's settings menu.</p>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+      <Reveal delay={0.3}>
+        <div className="featured-video-wrapper" onMouseEnter={() => handleHover(true)} onMouseLeave={() => handleHover(false)}>
+          <div className="youtube-aspect-ratio">
+            <iframe
+              ref={iframeRef}
+              src="https://www.youtube.com/embed/jz6RTqdn2ls?autoplay=1&mute=1&loop=1&playlist=jz6RTqdn2ls&enablejsapi=1"
+              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
           </div>
         </div>
       </Reveal>
-    </div>
-    <Reveal delay={0.3}>
-      <div className="featured-video-wrapper">
-        <div className="youtube-aspect-ratio">
-          <iframe
-            src="https://www.youtube.com/embed/jz6RTqdn2ls?autoplay=1&mute=1&loop=1&playlist=jz6RTqdn2ls"
-            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
-        </div>
-      </div>
-    </Reveal>
-  </header>
-)
+    </header>
+  )
+}
 
 const FeatureRow = ({ subtitle, title, description, extra, video, reversed = false }: any) => {
   const isYouTube = video.includes('youtube.com') || video.includes('youtu.be')
+  const iframeRef = React.useRef<HTMLIFrameElement>(null)
+
+  const handleHover = (isHovered: boolean) => {
+    if (!iframeRef.current || !isYouTube) return
+    const command = isHovered 
+      ? JSON.stringify({ event: 'command', func: 'playVideo' })
+      : JSON.stringify({ event: 'command', func: 'pauseVideo' })
+    
+    iframeRef.current.contentWindow?.postMessage(command, '*')
+  }
 
   return (
-    <div className={`feature-row ${reversed ? 'reverse' : ''}`}>
+    <div className={`feature-row ${reversed ? 'reverse' : ''}`} onMouseEnter={() => handleHover(true)} onMouseLeave={() => handleHover(false)}>
       <Reveal>
         <div className="feature-info">
           {subtitle && <h4>{subtitle}</h4>}
@@ -90,7 +111,8 @@ const FeatureRow = ({ subtitle, title, description, extra, video, reversed = fal
           {isYouTube ? (
             <div className="youtube-aspect-ratio">
               <iframe
-                src={video}
+                ref={iframeRef}
+                src={`${video}${video.includes('?') ? '&' : '?'}enablejsapi=1&mute=1`}
                 style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen

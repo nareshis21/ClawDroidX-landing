@@ -264,15 +264,20 @@ footer {
 /* Responsive */
 @media (max-width: 1024px) {
   .hero {
-    flex-direction: column;
+    flex-direction: column-reverse;
     text-align: center;
-    padding-top: 140px;
+    padding-top: 100px;
+    gap: 40px;
   }
   .hero-btns {
     justify-content: center;
   }
   .config-card {
-    margin: 60px auto 0;
+    margin: 40px auto 0;
+    max-width: 100%;
+  }
+  .featured-video-wrapper {
+    margin: 0 auto;
   }
 }
 
