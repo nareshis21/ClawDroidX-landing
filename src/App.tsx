@@ -155,20 +155,7 @@ const Hero = () => {
           </div>
         </Reveal>
 
-        <Reveal delay={0.4}>
-          <div className="config-card">
-            <div className="config-header">
-              <Activity size={18} />
-              <span>Agent Mechanics</span>
-            </div>
-            <div className="config-body">
-              <p>ClawDroidX stays out of your way. A <strong>floating overlay icon</strong> allows you to trigger the agent instantly from any screen. Just click the mic and speak your goal.</p>
-              <p style={{ marginTop: '8px', opacity: 0.8, fontSize: '0.9rem' }}>
-                <em>Tip: For now, be precise with your commands. We are evolving to support indirect/natural language perfectly in Phase 2.</em>
-              </p>
-            </div>
-          </div>
-        </Reveal>
+        {/* The simple card is removed in favor of the full section below */}
       </div>
       <Reveal delay={0.3}>
         <div className="featured-video-wrapper">
@@ -184,6 +171,61 @@ const Hero = () => {
         </div>
       </Reveal>
     </header>
+  )
+}
+
+const AssistantShowcase = () => {
+  return (
+    <section className="info-section assistant-showcase">
+      <div className="container">
+        <div className="section-header centered">
+          <Reveal>
+            <h2 style={{ fontSize: '3rem', marginBottom: '16px' }}>The True Assistant Experience</h2>
+            <p style={{ maxWidth: '800px', margin: '0 auto', fontSize: '1.2rem', opacity: 0.8 }}>
+              ClawDroidX isn't just an app; it's an omnipresent intelligence layer for your Android OS.
+            </p>
+          </Reveal>
+        </div>
+
+        <div className="showcase-grid">
+          <Reveal delay={0.1}>
+            <div className="showcase-item">
+              <div className="showcase-img-wrap">
+                <img src="/assets/float.jpg" alt="Always Present" />
+              </div>
+              <div className="showcase-text">
+                <h3>Everywhere You Are</h3>
+                <p>The ClawDroidX floating bubble is your universal key. Access agentic intelligence from any app, at any time, with a seamless overlay that never disrupts your flow.</p>
+              </div>
+            </div>
+          </Reveal>
+
+          <Reveal delay={0.2}>
+            <div className="showcase-item">
+              <div className="showcase-img-wrap">
+                <img src="/assets/after_flaot_clcik.jpg" alt="Transparent UI" />
+              </div>
+              <div className="showcase-text">
+                <h3>Intent Transparency</h3>
+                <p>The interface shows exactly what you said and how the AI interpreted it. A built-in correction layer ensures your intent is captured perfectly before execution.</p>
+              </div>
+            </div>
+          </Reveal>
+
+          <Reveal delay={0.3}>
+            <div className="showcase-item">
+              <div className="showcase-img-wrap">
+                <img src="/assets/zapto.jpg" alt="Intelligent Launch" />
+              </div>
+              <div className="showcase-text">
+                <h3>Semantic Intelligence</h3>
+                <p>Demonstrated fuzzy matching: even when heard as "zapto", the agent intelligently maps the intent to the correct target (Zepto) instantly for rapid app orchestration.</p>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </div>
+    </section>
   )
 }
 
@@ -348,6 +390,7 @@ function App() {
     <div className="app-container">
       <Navbar />
       <Hero />
+      <AssistantShowcase />
 
       <section className="info-section">
         <div className="section-header centered">

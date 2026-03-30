@@ -4,6 +4,19 @@
 
 ClawDroidX is a native agentic framework that navigates mobile applications locally and securely. By leveraging Android's accessibility layer and on-device semantic pruning, ClawDroidX turns natural language intent into autonomous OS-level action.
 
+## 🕹️ Interaction Model: Floating Mic
+
+Forget opening the app to issue commands. ClawDroidX provides a **floating overlay icon** that stays with you across all screens.
+
+![ClawDroidX Floating Icon](public/assets/float.jpg)
+
+### How it Works:
+- **Voice-First Overlay**: Click the floating mic icon. A transparent interface appears, showing a real-time transcript of your intent and the Agent's planned action.
+  ![ClawDroidX Voice UI](public/assets/after_flaot_clcik.jpg)
+- **Intelligent Launching**: No more precise typing. Ask for "zapto" or "ubar" — the agent intelligently scans your installed apps and launches the correct target (like Zepto or Uber) using semantic fuzzy matching.
+  ![Fuzzy App Recognition](public/assets/zapto.jpg)
+- **Phase 1 Precision**: For the best results during our initial beta, we recommend being precise with your commands. We are rapidly evolving toward full indirect intent recognition.
+
 ## 🚀 Public Beta (v0.1.0-beta)
 
 We have officially launched the **ClawDroidX Public Beta**. Experience the future of mobile agency with our secure, privacy-first orchestration engine.
