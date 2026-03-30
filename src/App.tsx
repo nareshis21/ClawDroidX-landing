@@ -546,13 +546,11 @@ function App() {
               <ul>
                 <li><a href="mailto:nareshlahajal@gmail.com">Email Us</a></li>
                 <li><a href="https://www.linkedin.com/in/naresh-kumar-lahajal-a50383252/">LinkedIn</a></li>
-                <li><a href="https://github.com/nareshis21/ClawDroidX">GitHub</a></li>
               </ul>
             </div>
             <div className="link-group">
               <h5>Get Started</h5>
               <ul>
-                <li><a href="https://github.com/nareshis21/ClawDroidX">Download Beta</a></li>
                 <li><a href="#">Documentation</a></li>
               </ul>
             </div>
